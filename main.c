@@ -26,7 +26,9 @@ typedef union
 static Object** objects = NULL;
 static int objectsLength = 0;
 
-static Vector3 lightDirection = (Vector3){ 5, -2, 5 };
+static Vector3 lightDirection = (Vector3){ 5.f, 5.f, -1.f };
+static float lightIntensity = 0.45f;
+static float ambientIntensity = 0.15f;
 
 void addObject(Object* object)
 {
@@ -57,6 +59,7 @@ void addObject(Object* object)
 Color colorMultiply(Color color, float t)
 {
 	if(t <= 0) return (Color){ 0, 0, 0 };
+	if(t > 1.f) t = 1.f;
 	return (Color){ color.r * t, color.g * t, color.b * t };
 }
 
@@ -98,7 +101,9 @@ Color traceRay(Vector3 origin, Vector3 direction)
     if (minObjectIntersect(origin, direction, 0.0001f, &normal, &t, &object))
     {
         Vector3 intersection = add(origin, multiply2(direction, t));
-        return colorMultiply(object->color, dot(normal, normalize(lightDirection))); // TODO: make lights array
+        return colorMultiply(object->color, 
+			    (dot(normal, normalize(lightDirection)) / (length(normal) * length(normalize(lightDirection)))) * lightIntensity 
+                            + ambientIntensity); // TODO: make lights array
     }
     Color sky = SKY_COLOR;
     return sky;
