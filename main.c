@@ -26,7 +26,7 @@ typedef union
 static Object** objects = NULL;
 static int objectsLength = 0;
 
-static Vector3 lightDirection = (Vector3){ 5.f, 5.f, -1.f };
+static Vector3 lightPosition = (Vector3){ 5.f, 5.f, -1.f };
 static float lightIntensity = 0.45f;
 static float ambientIntensity = 0.15f;
 
@@ -101,6 +101,7 @@ Color traceRay(Vector3 origin, Vector3 direction)
     if (minObjectIntersect(origin, direction, 0.0001f, &normal, &t, &object))
     {
         Vector3 intersection = add(origin, multiply2(direction, t));
+        Vector3 lightDirection = normalize(minus(lightPosition, intersection));
         return colorMultiply(object->color, 
 			    (dot(normal, normalize(lightDirection)) / (length(normal) * length(normalize(lightDirection)))) * lightIntensity 
                             + ambientIntensity); // TODO: make lights array
