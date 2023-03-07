@@ -23,7 +23,7 @@ typedef union
     uint32_t vesaColor;
 } VESAColor;
 
-static Object* objects = NULL;
+static Object** objects = NULL;
 static int objectsLength = 0;
 
 static Vector3 lightDirection = (Vector3){ 5, -2, 5 };
@@ -47,6 +47,8 @@ void addObject(Object* object)
         }
         free(objects);
     }
+	
+    newArray[length - 1] = object;
 
     objects = newArray;
     objectsLength = length;
@@ -109,7 +111,7 @@ bool minObjectIntersect(Vector3 origin, Vector3 direction, float tMin, Vector3* 
     Vector3 normalTemp = { 0,0,0 };
     for (int i = 0; i < objectsLength; i++)
     {
-        Object* object = (objects + i);
+        Object* object = *(objects + i);
         if (object->intersection(object, origin, direction, tMin, &normalTemp, &tTemp))
         {
             if (tTemp < *t && tTemp > tMin)
